@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matrix Display - Interactive</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px 0;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            font-family: monospace;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 60px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #output {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            white-space: pre;
+            font-size: 12px;
+            min-height: 100px;
+            border-radius: 4px;
+        }
+        .example {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Matrix Display Generator</h1>
+        
+        <div class="input-group">
+            <label>Matrix Name (e.g., C, S, B, A):</label>
+            <input type="text" id="matrixName" value="C" size="3">
+        </div>
+
+        <div class="input-group">
+            <label>Rows and Columns (format: RbC, e.g., 3b3):</label>
+            <input type="text" id="rowsColumns" value="3b3">
+        </div>
+
+        <div class="input-group">
+            <label>Matrix Elements (rows separated by semicolon, columns by comma):</label>
+            <textarea id="elements">3,-3,0;22,1,9;0,87,2</textarea>
+            <div class="example">
+                <strong>Examples:</strong><br>
+                3x3: 3,-3,0;22,1,9;0,87,2<br>
+                1x4: 3,23,0,0<br>
+                4x1: 3;23;123;-45<br>
+                5x5: 3,23,0,0,1;-45,-1,11,18,125;-444,876,234,0,0;0,0,0,11,12;-23,-345,234,123,234
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Max Digits (width of each cell):</label>
+            <input type="number" id="maxDigits" value="3" min="1" max="10">
+        </div>
+
+        <button onclick="displayMatrix()">Display Matrix</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        // Converted from JustBasic to JavaScript
+        // Matrix display function
+
+        function wordFunc(str, wordNum, delimiter) {
+            const words = str.split(delimiter);
+            return wordNum > 0 && wordNum <= words.length ? words[wordNum - 1] : "";
+        }
+
+        function showMat(matrixName, rowsColumns, elementsList, maxDigits) {
+            let n = matrixName;
+            let rbc = rowsColumns;
+            let elist = elementsList;
+            let mdg = maxDigits;
+            
+            if (n !== "") {
+                n = n.toUpperCase() + "=";
+                var s1 = 2;
+            } else {
+                var s1 = 0;
+            }
+
+            let h = "";
+            for (let i = 0; i < mdg + 1; i++) {
+                h += "#";
+            }
+
+            let rStr = wordFunc(rbc, 1, "b");
+            let cStr = wordFunc(rbc, 2, "b");
+            let r = parseInt(rStr);
+            let c = parseInt(cStr);
+
+            let s2 = c * h.length + 2;
+            s2 = s2 - 4;
+
+            let topRow = n + "|" + String.fromCharCode(175) + String.fromCharCode(175) + 
+                         " ".repeat(s2) + String.fromCharCode(175) + String.fromCharCode(175) + "|\n";
+            
+            let bottomRow = " ".repeat(s1) + "|__" + " ".repeat(s2) + "__|";
+
+            let middleRows = "";
+            let t = "";
+
+            for (let i = 1; i <= r; i++) {
+                let ee = wordFunc(elist, i, ";");
+                for (let j = 1; j <= c; j++) {
+                    let e = wordFunc(ee, j, ",");
+                    let val = parseInt(e);
+                    let formatted = String(val).padStart(mdg + 1, " ");
+                    t += formatted;
+                }
+                middleRows += " ".repeat(s1) + "|" + t + "  |\n";
+                t = "";
+            }
+
+            return topRow + middleRows + bottomRow;
+        }
+
+        function displayMatrix() {
+            let matrixName = document.getElementById('matrixName').value;
+            let rowsColumns = document.getElementById('rowsColumns').value;
+            let elements = document.getElementById('elements').value.trim();
+            let maxDigits = parseInt(document.getElementById('maxDigits').value);
+
+            if (!matrixName || !rowsColumns || !elements || !maxDigits) {
+                document.getElementById('output').innerHTML = "Please fill in all fields!";
+                return;
+            }
+
+            let result = showMat(matrixName, rowsColumns, elements, maxDigits);
+            document.getElementById('output').innerHTML = result;
+        }
+
+        // Display initial matrix on page load
+        window.onload = function() {
+            displayMatrix();
+        };
+    </script>
+</body>
+</html>
